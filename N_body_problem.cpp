@@ -9,33 +9,35 @@ using namespace std;
 class Vector
 {
 public:
-    public:
-    Vector(){}
+Vector(){}
 
-	Vector(double a, double b)
-	{
-		x = a;
-		y = b;
-    }
+virtual ~Vector(){}
 
-	double getX() const
-	{
-		return x;
-	}
+Vector(double a, double b)
+{
+    x = a;
+    y = b;
+}
 
-	double getY() const
-	{
-		return y;
-	}
+double getX() const
+{
+    return x;
+}
 
-	void setX(double x)
-	{
-	    this->x = x;
-	}
-    void setY(double y)
-    {
-        this->y = y;
-    }
+double getY() const
+{
+    return y;
+}
+
+void setX(double x)
+{
+    this->x = x;
+}
+
+void setY(double y)
+{
+    this->y = y;
+}
 
 Vector operator+ (const Vector& v)
 {
@@ -69,9 +71,17 @@ private:
     double x, y;
 };
 
-Vector operator* (double f, Vector& v){
+Vector operator* (double f, Vector& v)
+{
     double a = f * v.getX();
     double b = f * v.getY();
+    return Vector(a, b);
+}
+
+Vector operator/ (double f, Vector& v)
+{
+    double a = f / v.getX();
+    double b = f / v.getY();
     return Vector(a, b);
 }
 
@@ -93,60 +103,11 @@ ostream& operator<< (ostream &os, Vector &v)
 class Body
 {
 public:
-    Body();
-    Body(double a, double b, Vector c, double d);
-    void Step (Body* Array, int n);
-    virtual ~Body();
-    double getx() const
-    {
-        return this->x;
-    }
+Body() {}
 
-    double gety() const
-    {
-        return this->y;
-    }
+virtual ~Body() {}
 
-    Vector getspeed() const
-    {
-        return this->speed;
-    }
-    double getmass() const
-    {
-        return this->m;
-    }
-    void setx (double X)
-	{
-	    x = X;
-	}
-    void sety(double Y)
-    {
-        y = Y;
-    }
-    void setspeed(Vector s)
-    {
-        speed = s;
-    }
-    void setmass(double M)
-    {
-        m = M;
-    }
-
-private:
-    double distance (Body* B);
-    Vector Force (Body* B);
-    Vector ResultantForce (Body* Array, int n);
-    double x;
-    double y;
-    Vector speed;
-    double m;
-};
-
-Body::Body() {}
-
-Body::~Body() {}
-
-Body::Body(double a, double b, Vector c, double d)
+Body(double a, double b, Vector c, double d)
 {
     x = a;
     y = b;
@@ -154,21 +115,71 @@ Body::Body(double a, double b, Vector c, double d)
     m = d;
 }
 
-double Body::distance (Body* B)
+void Step (Body* Array, int n)
+{
+    Vector accel = this->ResultantForce(Array, n) / this->m;
+    this->speed = this->speed + accel * dt;
+    this->x = this->x + this->speed.getX() * dt;
+    this->y = this->y + this->speed.getY() * dt;
+}
+
+double getx() const
+{
+    return this->x;
+}
+
+double gety() const
+{
+    return this->y;
+}
+
+Vector getspeed() const
+{
+    return this->speed;
+}
+
+double getmass() const
+{
+    return this->m;
+}
+
+void setx (double X)
+{
+    x = X;
+}
+
+void sety(double Y)
+{
+    y = Y;
+}
+
+void setspeed(Vector s)
+{
+    speed = s;
+}
+
+void setmass(double M)
+{
+    m = M;
+}
+
+private:
+
+double distance (Body* B)
 {
     return sqrt((this->x - B->x)*(this->x - B->x) + (this->y - B->y)*(this->y - B->y));
 }
 
-Vector Body::Force (Body* B)
+Vector Force (Body* B)
 {
     Vector a;
     if ((this->distance(B)) > 0.00001)
     {
         a.setX(B->x - this->x);
         a.setY(B->y - this->y);
-        a * this->m;
-        a * B->m;
-        a / ((this->distance(B))*(this->distance(B)));
+        a = this->m * a;
+        a = B->m * a;
+        a = a / ((this->distance(B))*(this->distance(B)));
     }
     else
     {
@@ -178,7 +189,7 @@ Vector Body::Force (Body* B)
     return a;
 }
 
-Vector Body::ResultantForce(Body* Array, int n)
+Vector ResultantForce (Body* Array, int n)
 {
     Vector a;
     a.setX(0);
@@ -190,13 +201,11 @@ Vector Body::ResultantForce(Body* Array, int n)
     return a;
 }
 
-void Body::Step(Body* Array, int n)
-{
-    Vector accel = this->ResultantForce(Array, n) / this->m;
-    this->speed = this->speed + accel * dt;
-    this->x = this->x + this->speed.getX() * dt;
-    this->y = this->y + this->speed.getY() * dt;
-}
+double x;
+double y;
+Vector speed;
+double m;
+};
 
 istream& operator>>(istream &is, Body &B)
 {
@@ -229,19 +238,18 @@ int main()
 
     /*for (t = 0; t < 1.5; t = t + dt) //Вывод через стандартный поток
     {
-        cout << t << " ";
         for (int i = 0; i < n; i++)
         {
             cout << Array [i];
             Array[i].Step(Array, n);
         }
-        cout << endl;
     }*/
 
     ofstream fout("data.txt");          // Вывод в файл
-    for (t = 0; t < 1.5 /*Время можно изменять*/; t = t + dt)
+    for (t = 0; t < 1.5; t = t + dt)
     {
         fout << t << "\t";
+
         for (int i = 0; i < n; i++)
         {
             fout << Array [i];
