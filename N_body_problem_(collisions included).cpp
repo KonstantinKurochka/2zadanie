@@ -273,11 +273,16 @@ int main()
 
     /*for (t = 0; t < 1.5; t = t + dt) //Вывод через стандартный поток
     {
+        cout << t << "\t";
         for (int i = 0; i < n; i++)
         {
-            cout << Array [i];
-            Array[i].Step(Array, n);
+            if (Array[i].exists == true)
+            {
+                cout << Array [i];
+                Array[i].Step(Array, n);
+            }
         }
+        cout << endl;
     }*/
 
     ofstream fout("data.txt");          // Вывод в файл
