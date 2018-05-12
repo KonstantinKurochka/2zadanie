@@ -232,8 +232,6 @@ ostream& operator<<(ostream &os,const Body &B)
     return os;
 }
 
-// Ваш класс сцены. В него де-факто превратится текущий main или его аналог.
-// Унаследован от NBodyScene, реализует интерфейс с методами getNumberOfBodies / getBody / doTimeStep.
 class SampleScene : public NBodyScene
 {
 protected:
@@ -255,20 +253,13 @@ public:
 
     void doTimeStep() override
     {
-        for (int t = 0; t < 1.5; t = t + dt) //Вывод через стандартный поток
-        {
-            cout << t << "\t";
-
             for (int i = 0; i < n; i++)
             {
                 cout << Array [i];
                 Array[i].Step(Array, n);
             }
             cout << endl;
-        }
     }
-
-    // Далее ещё куча ваших методов, никак не связанных с NBodyScene
 
     void initScene()
     {
