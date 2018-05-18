@@ -147,7 +147,7 @@ double getmass() const
 
 double getR () const
 {
-    return pow(this->m, 1/3);
+    return pow(this->m, (double)1/3);
 }
 
 void setx (double X)
@@ -186,7 +186,7 @@ Vector Force (Body* B)
         a.setY(B->y - this->y);
         a = this->m * a;
         a = B->m * a;
-        a = a / ((this->distance(B))*(this->distance(B)));
+        a = a / ((this->distance(B)) * (this->distance(B)) * (this->distance(B))); // нормировка + деление на квадрат расстояния
     }
     else
     {
